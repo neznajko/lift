@@ -10,7 +10,7 @@ import sys #---------------------------------------------------------- 6
 
 # ĝlobal stuff ####################################################### 0
 args = None # command line arguments                                   1
-request = deque() # user requests per unit time                        3
+request = deque() # user requests per unit time                        2
 
 def getdir(a, b): return (a > b) - (a < b) # :::ƀoØm:::::::::::::::::: 0
 
@@ -74,6 +74,7 @@ class Lift: ################✖#######ə#######################ʎ######### 0
         self.dir = 0 ##æ############################### lift direction 9
         self.floor = args.nfloors - 1 # lift floor                     0
         self.task = None # current request                             1
+        self.ignore = False # ignore flag                              2
 
     def __str__(self): ####################ℯ#################### Śebuk 0
         a = f'({self.floor}) ❮{self.dir}❯' #                           1
@@ -89,41 +90,35 @@ class Lift: ################✖#######ə#######################ʎ######### 0
             self.cycle = True # clckn|xt wait fo| req _   _  _ __A__ _ 2
             return ############Ũ######|############################### 3
         self.task = self.request[0] # copy Ninja Kakashi               4
-        self.action = self.queueck # ck ze wating queue _________⎠____ 5
-
-    def getdir(self): ###µ#############return#ignore#flag##®########## 0
-        if self.exitstk: #                                 |           1
-            self.dir = getdir(self.exitstk[0], self.floor) #           2
-            return False ################¶############################ 3
-        if self.floor == self.task.orig: #                             4
-            self.dir = self.task.dir #                                 5
-            return False #############################¥############### 6
         self.dir = getdir(self.task.orig, self.floor) #                7
-        return (self.dir != self.task.dir) #__________________°_______ 8
+        self.ignore = (self.dir != self.task.dir) #___________°_______ 8
+        self.action = self.queueck # ck ze wating queue _________⎠____ 9
 
     def ck(self, req): #########ыℜ#########⌇########################## 0
         self.ntastk.append(req) # nta      |                           1
         self.request.remove(req) # ck      |                           2
         self.queue[self.floor].remove(req) #__ʐ_______________________ 3
 
-    def queueck(self): ###Ö############⊲############################## 0
-        if self.getdir(): #            |                               1
-            self.action = self.justGou #                               2
-            return ####################Œ############################## 3
-        queue = self.queue[self.floor] #                               4
-        if queue: ####################ś############################### 5
-            if self.task == queue[0]: #                                6
-                self.task = None # jobs done!                          7
-        # bug namba 342: Here ve have to enclose ze deque in a list()  8
-        # unless we want a «deque mutated during iteration» exception  9
-        for req in list(queue): ####«############# same directions ck  0
-            if self.dir == req.dir: ##??############################## 1
-                self.ck(req) # 4k the req                              2
-        if self.ntastk: ###########£################################## 3
-            self.action = self.nta # vaita one cycle and zen Gou       4
-            self.cycle = True #               _                        5
-        else: # neva beginze(HuKora He §ano4Bau nptB BuHaru..)         6
-            self.action = self.justGou #_______¥______________________ 7
+    def queueck(self): ################⊲#Ö############################ 0
+        queue = self.queue[self.floor] # |                             1
+        if queue: ####################ś##|############################ 2
+            if self.task == queue[0]: #  |                             3
+                self.dir = self.task.dir #                             4
+                self.ignore = False ###Œ############################## 5
+                self.task = None ######|####################jobs done! 6
+        if self.ignore: #              |                               7
+            self.action = self.justGou #                               8
+            return ################################################### 9
+        # bug namba 342: Here ve have to enclose ze deque in a list()  0
+        # unless we want a «deque mutated during iteration» exception  1
+        for req in list(queue): ####«############# same directions ck  2
+            if self.dir == req.dir: ##??############################## 3
+                self.ck(req) # 4k the req                              4
+        if self.ntastk: ###########£################################## 5
+            self.action = self.nta # vaita one cycle and zen Gou       6
+            self.cycle = True #               _                        7
+        else: # neva beginze(HuKora He §ano4Bau nptB BuHaru..)         8
+            self.action = self.justGou #_______¥______________________ 9
 
     def justGou(self): ########⨱###❰################################## 0
         self.floor += self.dir #___|__________________________________ 1
@@ -336,39 +331,39 @@ class Canvas: ##¦#######'#######|#######|#######'#######¦#######
 #>>>######################################################dOthEMAth### 0
 def dOthEMAth(): # main function                                       1
     global args # declare some global variables (actually only one)    2
-    # ℘arser stuff ##################Ʌ#########―##############ɀ#×#ȑ### 3
-    pasa = argparse.ArgumentParser() # what is |his?          | | |    4
+    # ℘arser stuff ##################Ʌ#########―##############ɀ###ȑ### 3
+    pasa = argparse.ArgumentParser() # what is |his?          |   |    4
     pasa.formatter_class = argparse.ArgumentDefaultsHelpFormatter #    5
-    add_arg = pasa.add_argument # shorcut #####|###‰##########|#|##### 6
-    add_arg("--mode", type = int, default = 0, #   |          | |      7
-            help = "Com Center mode of operation") #          | |      8
-    add_arg('-n', type = int, default = 12, dest = 'ncycles', # |      9
-            help = "number of cycles (-1 for inf. loop)") #     |      0
-    add_arg("--nfloors", type = int, default = 16, #            |      1
-            help = "number of floors") ##########@##############|##### 2
-    add_arg("--nlifts", type = int, default = 1, #              |      3
-            help = "number of lifts") #                         |      4
-    add_arg("--lambda", type = float, default = .3, dest = 'λ', #      5
-            help = "Poisson pdf parameter (--simula)") #               6
-    add_arg("--verbose", action = 'store_true', #                      7
-            help = "debug info") ##############Ƚ##########ʧ########### 8
-    add_arg("--simula", action = 'store_true', #          |            9
-            help = "generate random users") #             |            0
-    add_arg('-t', type = float, default = 2, dest = 'Δt', #            1
-            help = "time in sec. between 2 clock ticks") #             2
+    add_arg = pasa.add_argument # shorcut #####|###‰###×######|####### 6
+    add_arg("--lambda", type = float, default = .3, dest = 'λ', #      7
+            help = "Poisson pdf parameter (--simula)") #      |        8
+    add_arg("--mode", type = int, default = 0, #   |          |        9
+            help = "Com Center mode of operation") #          |        0
+    add_arg('-n', type = int, default = 12, dest = 'ncycles', #        1
+            help = "number of cycles (-1 for inf. loop)") #            2
+    add_arg("--nfloors", type = int, default = 16, #                   3
+            help = "number of floors") ##########@########ʧ########### 4
+    add_arg("--nlifts", type = int, default = 1, #        |            5
+            help = "number of lifts") #                   |            6
+    add_arg("--simula", action = 'store_true', #          |            7
+            help = "generate random users") #             |            8
+    add_arg('-t', type = float, default = 2, dest = 'Δt', #            9
+            help = "time in sec. between 2 clock ticks") #             0
+    add_arg("--verbose", action = 'store_true', #                      1
+            help = "debug info") ##############Ƚ###################### 2
     add_arg("--visual", action = 'store_true', #                       3
-            help = "ze old hacker (bash)") #                           4
+            help = "ze old hacker") #                                  4
     args = pasa.parse_args() #                                         5
     ### loℭal stuff ###########ǯ#################ș#################### 6
     regex = re.compile(r'\d+') #                 |                     7
     lift = [Lift(j) for j in range(args.nlifts)] #                     8
     clock = 0 # tick counter ##############ƨ########################## 9
     if args.visual: #                      |                           0
-        system("clear") #             |                                4
-        print(CSI + '?25', end = 'l') # hide cursor                    5
-        canvas = [Canvas(j) for j in lift] #                           1
-        log = open("lift.log", 'w') ##…############################### 2
-        args.simula = True #          |                                3
+        system("clear") #             |                                1
+        print(CSI + '?25', end = 'l') # hide cursor                    2
+        canvas = [Canvas(j) for j in lift] #                           3
+        log = open("lift.log", 'w') ##…############################### 4
+        args.simula = True #          |                                5
     else: ###############ɸ#######################ɶ#########ɛ########## 6
         log = sys.stdout #                       |         |           7
     if args.verbose: log.write(str(args) + '\n') # <<<ƒoobll<<<<<<<<<< 8
@@ -389,7 +384,7 @@ def dOthEMAth(): # main function                                       1
         time.sleep(args.Δt) # cycle time                               _
         clock += 1 # clcknext #################################### <<< _
 
-def exit(code): ##################################?################### 0
+def exit(code): ##################################✚################### 0
     if args.visual: print(CSI + '?25', end = 'h') # show cursor        1
     sys.exit(code) # _________________________________________________ 2
 
@@ -400,4 +395,4 @@ if __name__ == '__main__':
     except (Exception, KeyboardInterrupt) as e:
         print(e)
         exit(1)
-################################################################### log:
+##µ®############################################################### log:
