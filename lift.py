@@ -1,14 +1,16 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 import argparse # ---------------------------------------------------- 0
-from collections import deque # -------------------------------------- 1
-import time # -------------------------------------------------------- 2
-from numpy.random import poisson # ----------------------------------- 3
-import re # regular expresions --------------------------------------- 4
-from random import randint, sample #---------------------------------- 5
+import re # regular expresions --------------------------------------- 1
+from collections import deque # -------------------------------------- 2
+from os import system # ---------------------------------------------- 3
+from random import randint, sample # --------------------------------- 4
+from copy import deepcopy # ------------------------------------------ 5
 import sys #---------------------------------------------------------- 6
+from numpy.random import poisson # ----------------------------------- 7
+import time # -------------------------------------------------------- 8
 
-# ĝlobal stuff ####################################################### 0
+# ĝlobal stu£f ####################################################### 0
 args = None # command line arguments                                   1
 request = deque() # user requests per unit time                        2
 
@@ -64,35 +66,35 @@ def scvstr(scvs): # concatenate scvs' request striⲊgs ################ 0
 
 class Lift: ################✖#######ə#######################ʎ######### 0
     def __init__(self, id): #       |                       |          1
-        self.id = id ######℥########|################################# 2
-        self.cycle = False # if True|move to the next cycle |          3
+        self.id = id ######℥########|#######################|######### 2
+        self.cycle = False # if True|jump to next clock cyclę          3
         self.action = self.wait4req # ze action function    |          4
         self.request = deque() # external requests          |          5
         self.queue = [deque() for f in range(args.nfloors)] #          6
-        self.exitstk = [] # stack representing lift's pressed buttons  7
-        self.ntastk = [] # stack with people entering the lift         8
-        self.dir = 0 ##æ############################### lift direction 9
+        self.exitstk = [] # stack repræsenting lift's pressed buttons  7
+        self.ntastk = [] # stack with ℙeople entering the lift         8
+        self.dir = 0 #################|################ lift direction 9
         self.floor = args.nfloors - 1 # lift floor                     0
-        self.task = None # current request                             1
+        self.task = None # cÙrrent request                             1
         self.ignore = False # ignore flag                              2
 
     def __str__(self): ####################ℯ#################### Śebuk 0
         a = f'({self.floor}) ❮{self.dir}❯' #                           1
-        b = scvstr(self.request) ########################±############ 2
-        c = self.action.__name__ #                       |             3
+        b = scvstr(self.request) ##########################±########## 2
+        c = self.action.__name__ #                         |           3
         d = ', '.join(map(lambda j: str(j), self.exitstk)) #           4
         e = scvstr(self.ntastk) ###########¦########################## 5
         f = scvstr(self.queue[self.floor]) #########¿################# 6
         return f'{a} [{b}] {c} ❬❬{d}❭❭ «{e}» ❲{f}❳' #_________________ 7
   
-    def wait4req(self): #####Œő######Ŕ##########∏##################### 0
-        if not self.request: #|empty |eq stk?   |                      1
-            self.cycle = True # clckn|xt wait fo| req _   _  _ __A__ _ 2
-            return ############Ũ######|############################### 3
+    def wait4req(self): #####Œő#####Ŕ#################―############### 0
+        if not self.request: #|empty|req stk?         |                1
+            self.cycle = True # clckØext wait for req |   _  _ __A__ _ 2
+            return #################|#################|############### 3
         self.task = self.request[0] # copy Ninja Kakashi               4
-        self.dir = getdir(self.task.orig, self.floor) #                7
-        self.ignore = (self.dir != self.task.dir) #___________°_______ 8
-        self.action = self.queueck # ck ze wating queue _________⎠____ 9
+        self.dir = getdir(self.task.orig, self.floor) #                5
+        self.ignore = (self.dir != self.task.dir) #                    6
+        self.action = self.queueck # ck ze wating queue ______°_______ 7
 
     def ck(self, req): #########ыℜ#########⌇########################## 0
         self.ntastk.append(req) # nta      |                           1
@@ -148,8 +150,6 @@ class Lift: ################✖#######ə#######################ʎ######### 0
         else: # *∗*∗*∗*∗*∗*∗*∗*∗*∗*∗*∗*ÿ*∗*∗*∗*∗*∗*∗*∗*∗*∗*∗*∗*∗*∗*∗*∗ 4
             self.action = self.queueck # ck waiting queue              5
         self.cycle = True # wait one cycle on ze floor ____ƽ__________ 6
-
-from os import system
 ########Ö#######ö#######O#######ò#######o#######6#######0#######
 #       |       |       |       |       |       |       |       
 CSI = '\033[' ##########|############Control#Sequence#In|roducer
@@ -211,7 +211,7 @@ Bold = 1 #######¦#######|#######|#######|#######¦#######.#######
 Ital = 3 #######,#######,#######|#######¦#######|#######¦#######
 Norm = 22 ######¦#######.#######¦#######¦#######,#######|#######
 class Brush: ###|#######¦#######'#######|#######'#######,#######
-    def __init__(self, patron, répéter, sgr = [Norm]): #
+    def __init__(self, patron, répéter, sgr = [Norm]): #|
         if type(patron) is int: #       |       ¦       ,
             patron = hex(patron)[2:].upper() # convert to hex
             self.stroke = patron.rjust(répéter, ' ') #  |
@@ -224,7 +224,6 @@ class Brush: ###|#######¦#######'#######|#######'#######,#######
         ls = (Bold, Ital, Norm) #       |       '       | 
         self.sgr = sample(ls, randint(1, len(ls))) #    |
 #       ¦       |       ¦       |       ,       `       '
-from copy import deepcopy #     |       '       ;       ¦
 scw = 3 # scv width     |       '       ;       ,       |
 class Canvas: ##¦#######'#######|#######|#######'#######¦#######
     Red   = [200,   0,   0] #   '       ¦       ,       |
@@ -328,23 +327,23 @@ class Canvas: ##¦#######'#######|#######|#######'#######¦#######
             self.DrawQueue(j) # |       '       :       ¦
         self.queue = deepcopy(self.lift.queue) #|       ¦
         self.DumpState(clock) # '       ,       ¦       |
-#>>>######################################################dOthEMAth### 0
-def dOthEMAth(): # main function                                       1
-    global args # declare some global variables (actually only one)    2
-    # ℘arser stuff ##################Ʌ#########―##############ɀ###ȑ### 3
-    pasa = argparse.ArgumentParser() # what is |his?          |   |    4
+#>>>#############¡###################Ʌ####################dOthEMAtħ### 0
+def dOthEMAth(): # main function     |                            |    1
+    global args # declare some global|variables (actually only one]    2
+    # ℘arser stuff ##################|############################|### 3
+    pasa = argparse.ArgumentParser() # what is this?              |    4
     pasa.formatter_class = argparse.ArgumentDefaultsHelpFormatter #    5
-    add_arg = pasa.add_argument # shorcut #####|###‰###×######|####### 6
+    add_arg = pasa.add_argument # shorcut ######################¯##### 6
     add_arg("--lambda", type = float, default = .3, dest = 'λ', #      7
-            help = "Poisson pdf parameter (--simula)") #      |        8
-    add_arg("--mode", type = int, default = 0, #   |          |        9
+            help = "Poisson pdf parameter (--simula)") #######ɀ####### 8
+    add_arg("--mode", type = int, default = 0, ####‰##########|####### 9
             help = "Com Center mode of operation") #          |        0
     add_arg('-n', type = int, default = 12, dest = 'ncycles', #        1
             help = "number of cycles (-1 for inf. loop)") #            2
-    add_arg("--nfloors", type = int, default = 16, #                   3
-            help = "number of floors") ##########@########ʧ########### 4
+    add_arg("--nfloors", type = int, default = 16, #######ʧ########### 3
+            help = "number of floors") ##########@########|########### 4
     add_arg("--nlifts", type = int, default = 1, #        |            5
-            help = "number of lifts") #                   |            6
+            help = "number of lifts") #########¼##########|########### 6
     add_arg("--simula", action = 'store_true', #          |            7
             help = "generate random users") #             |            8
     add_arg('-t', type = float, default = 2, dest = 'Δt', #            9
@@ -357,10 +356,10 @@ def dOthEMAth(): # main function                                       1
     ### loℭal stuff ###########ǯ#################ș#################### 6
     regex = re.compile(r'\d+') #                 |                     7
     lift = [Lift(j) for j in range(args.nlifts)] #                     8
-    clock = 0 # tick counter ##############ƨ########################## 9
-    if args.visual: #                      |                           0
-        system("clear") #             |                                1
-        print(CSI + '?25', end = 'l') # hide cursor                    2
+    clock = 0 ## ticß coünter ########á####ƨ########################## 9
+    if args.visual: #   |             |    |                           0
+        system("clear") #             |    |                           1
+        print(CSI + '?25', end = 'l') # hidé cursor                    2
         canvas = [Canvas(j) for j in lift] #                           3
         log = open("lift.log", 'w') ##…############################### 4
         args.simula = True #          |                                5
@@ -368,7 +367,7 @@ def dOthEMAth(): # main function                                       1
         log = sys.stdout #                       |         |           7
     if args.verbose: log.write(str(args) + '\n') # <<<ƒoobll<<<<<<<<<< 8
     #############################Ǒ##### staät #############|########## 9
-    while clock != args.ncycles: # let's ℊou               |           0
+    while clock != args.ncycles: # let's ℊou               |          0
         if args.simula: # if True simulate requests by generating scvs 1
             gen_scv() #                                    |           2
         else: ###############ǣ############ read requests from ze infut 3
@@ -395,4 +394,4 @@ if __name__ == '__main__':
     except (Exception, KeyboardInterrupt) as e:
         print(e)
         exit(1)
-##µ®############################################################### log:
+##µ®×―############################################################# log:
