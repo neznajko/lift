@@ -43,14 +43,13 @@ is a request etc. Here is the complete action graph:
 
 ## lift.py
 
-The script uses *f-formatting* so it will run with python3.6 or later
-. I've also made some experiments with  *Unicode Characters* mostly
-for comments but also for *unit time* and *lambda* parameters,
-so there might be some possible issues like not displaying some symbols
-correctly etc.
+The script uses *f-formatting* so it will run with python3.6 or later,
+also I've made some experiments with *Unicode* characters
+for comments but also for *time* and *lambda* parameters,
+so there might be some issues.
 
 You can view short descriptions and default values of program's
-options with *lift.py --help*:
+options with ***lift.py --help***:
  ```
 usage: lift.py [-h] [--lambda Λ] [--mode MODE] [-n NCYCLES]
                 [--nfloors NFLOORS] [--nlifts NLIFTS] [--simula] [-t ΔT]
@@ -69,8 +68,8 @@ optional arguments:
   --visual           ze old hacker (default: False)
 ```
 
-Most of them are self-explanatory but some of them require a bit more
-detailed explanation:
+Most of them are self-explanatory but few of them require additional
+explanation:
 
 * mode 
 
@@ -80,7 +79,7 @@ detailed explanation:
 * lambda
 
   from *Probability Theory* we know that the number of people entering
-  a building per unit time is a *Poisson Distribution*. The value of
+  a building per unit time has a *Poisson Distribution*. The value of
   this parameter is equal to the mean number of *scvs* entering the
   *Com Center* per ***clock cycle***. It is used when *--simula*
   option is set. Usually one has to increase this value when there are
@@ -88,9 +87,8 @@ detailed explanation:
 
 * visual
 
-  Ze old hacker (xterm control seq). It automatically sets *--simula*
-  as well. I probably had to upload a video showing the simulation,
-  but I've made only a screenshot at the end of the following command:
+  probably had to upload a video showing the simulation,
+  but I've made only a screenshot at the end of the that command:
   
   ```lift.py -n 30 --lambda 1.5 --visual --nlifts 2```
 
